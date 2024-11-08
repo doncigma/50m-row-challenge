@@ -1,0 +1,51 @@
+Need a hash table (look up c hash table tutorial) that contains all 1000 unique cities.
+As we parse, when a city name that is already entered is found, add that degree value to the table.
+Then iterate over the table using what should be O(1) lookup to print fastly.
+
+Hash table:
+table = {
+    "Seattle": {
+        "sum": 0.0,
+        "cnt": 0,
+        "avg": 0.0,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "Tukwila": {
+        "sum": 0.0,
+        "cnt": 0,
+        "avg": 0.0,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "Bothell": {
+        "sum": 0.0,
+        "cnt": 0,
+        "avg": 0.0,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "New York": {
+        "sum": 0.0,
+        "cnt": 0,
+        "avg": 0.0,
+        "min": 0.0,
+        "max": 0.0
+    }
+};
+
+void addTemp(float temp, string cityName) {
+    this = table[cityName]
+    this.sum += temp
+    this.cnt += 1
+    temp < this.min ? this.min = temp : nothing
+    temp > this.max ? this.max = temp : nothing
+}
+
+Over each iteration, we will:
+    Parse:
+    (1) Check if city name is inside hash table
+        (2) True: addTemp(deg, city)
+        (3) False: Add to table
+    Lookup:
+    (1) 
