@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct {
     char* key;
@@ -15,55 +16,84 @@ typedef struct {
     char* key;
     tempObj tempData;
     city* next;
+    city* prev;
 } city;
 
-city* search(const city* cities, const size_t size, const char* key) {
-    for (size_t i=0; i<size; i++) {
-        if (strcmp(cities[i].key, key) == 0) {
+// SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
+city* search(const city* const cities, const size_t size, const char* const searchKey) {
+    for (size_t i = 0; i < size; i++) {
+        if (strcmp(cities[i].key, searchKey) == 0) {
             return &cities[i];
         }
     }
     return NULL;
 }
 
+city* add(city* const cities, size_t* const size, city* const endptr, const city* const cityToAdd, const size_t citySize) {
+    // probably memset some sizeof(city) at the endptr and initliaze to cityToAdd
+    *size += 1;
+
+    realloc(cities, citySize);
+    memcpy(endptr, cityToAdd, (*size) * citySize);
+
+    /*
+    // Reallocate memory for the new element
+    city* temp = realloc(*cities, (*size) * sizeof(city));
+    if (temp == NULL) {
+        // Handle allocation failure
+        perror("Failed to allocate memory");
+        return NULL;
+    }
+    *cities = temp;
+
+    // Set endptr to the correct new end position
+    city* endptr = &(*cities)[*size - 1]; // This points to the new last element, which is valid and contiguous
+    memcpy(endptr, &cityToAdd, sizeof(city)); // Copy data into the newly allocated space
+
+    return endptr;
+    */
+}
+
+// PSD: potential slowdown
+
 int main(int argc, char *argv[]) {
+    int nameLength = 101;
+    int lineLength = 106;
+    int citiesLength = 1001;
+    int strTempLength = 6;
+    
+    city cities[citiesLength];
+    size_t size = sizeof(cities) / sizeof(city);
+    city* endptr = cities + size;
+
+    char strTemp[strTempLength];
+    char cityName[nameLength];
+    char line[lineLength];
+
     const char const* fileName = argv[1];
-    
-    city cities[1000];
-    size_t size = sizeof(cities) / sizeof(cities);
-    
-    
-    
-    char cityName[] = "";
-    float temp;
-
     FILE* file = fopen(fileName, "r");
-    char line[40];
-    
-    while (fgets(line, sizeof(line), file)) {
-        char currChar = line[0];
-        char str[] = currChar;
-        str + currChar;
-        
-        // We want to go until we see a semicolon and add along the way for the city name, store
-        for (int i = 0; currChar != ";"; i++) {
-            currChar = line[i];
-        }
-        // Then we want to go until the null termiantor for the temp, convert then store
-        for (int i = 0; currChar != "\n"; i++) {
-            currChar = line[i];
+
+    while (fgets(line, lineLength, file)) {
+        for (int i = 0; i < lineLength; i++) {
+            // Parse the city name and temp by ; delim
+            if (line[i] == ';') {
+                strncpy(cityName, line, i);
+                strncpy(strTemp, line + i, strlen(line) - i); // PSD: can do lineLength - i, provided strncopy goes to null term
+
+                // Convert and store
+                float temp = strtof(strTemp, NULL);
+                city* this = search(cities, size, cityName);
+                if (this) {
+                    tempObj data = this->tempData;
+                    
+                    data.sum += temp;
+                    data.cnt += 1;
+                    temp < data.min ? data.min = temp : data.min;
+                    temp > data.max ? data.max = temp : data.max;
+                }
+            }
         }
 
-        city* this;
-        if (this = search(&cities, size, &cityName)) {
-            tempObj thisData = this->tempData;
-            
-            thisData.sum += temp;
-            thisData.cnt++;
-            temp < thisData.min ? thisData.min = temp : thisData.min;
-            temp > thisData.max ? thisData.max = temp : thisData.max;
-        }
-        continue;
     }
 
     return 0;
