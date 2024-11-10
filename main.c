@@ -15,12 +15,12 @@ typedef struct {
 typedef struct {
     char* key;
     tempObj tempData;
-    city* next;
-    city* prev;
+    // city* next;
+    // city* prev;
 } city;
 
 // SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
-city* search(const city* const cities, const size_t size, const char* const searchKey) {
+city* search(city* const cities, const size_t size, const char* const searchKey) {
     for (size_t i = 0; i < size; i++) {
         if (strcmp(cities[i].key, searchKey) == 0) {
             return &cities[i];
@@ -33,7 +33,7 @@ city* add(city* const cities, size_t* const size, city* const endptr, const city
     // probably memset some sizeof(city) at the endptr and initliaze to cityToAdd
     *size += 1;
 
-    realloc(cities, citySize);
+    city* newLoc = realloc(cities, citySize);
     memcpy(endptr, cityToAdd, (*size) * citySize);
 
     /*
@@ -66,35 +66,40 @@ int main(int argc, char *argv[]) {
     size_t size = sizeof(cities) / sizeof(city);
     city* endptr = cities + size;
 
-    char strTemp[strTempLength];
-    char cityName[nameLength];
+    // char cityName[nameLength];
+    // char strTemp[strTempLength];
     char line[lineLength];
 
     const char const* fileName = argv[1];
     FILE* file = fopen(fileName, "r");
 
     while (fgets(line, lineLength, file)) {
-        for (int i = 0; i < lineLength; i++) {
-            // Parse the city name and temp by ; delim
-            if (line[i] == ';') {
-                strncpy(cityName, line, i);
-                strncpy(strTemp, line + i, strlen(line) - i); // PSD: can do lineLength - i, provided strncopy goes to null term
-
-                // Convert and store
-                float temp = strtof(strTemp, NULL);
-                city* this = search(cities, size, cityName);
-                if (this) {
-                    tempObj data = this->tempData;
-                    
-                    data.sum += temp;
-                    data.cnt += 1;
-                    temp < data.min ? data.min = temp : data.min;
-                    temp > data.max ? data.max = temp : data.max;
-                }
-            }
+        // Pointer math to parse the city name and temp by the semicolon
+        char* delim = strpbrk(line, ";");
+        if (delim) {
+            char* cityName = line;
+            *delim = '\0';
+            char* strTemp = delim + 1;
+            printf("City: %s\n", cityName);
+            printf("Temp: %s\n", strTemp);
         }
+        else {
+            fprintf(stderr, "Error: No city found");
+            continue;
+        }
+    
 
+    
+        // // Convert and store
+        // float temp = strtof(strTemp, NULL);
+        // city* this = search(cities, size, cityName);
+        // if (this) {
+        //     tempObj data = this->tempData;
+            
+        //     data.sum += temp;
+        //     data.cnt += 1;
+        //     temp < data.min ? data.min = temp : data.min;
+        //     temp > data.max ? data.max = temp : data.max;
+        // }
     }
-
-    return 0;
 }

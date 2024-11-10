@@ -1,2 +1,2 @@
 process_measurements:
-	gcc -o process_measurements main.c
+	gcc -o out main.c
