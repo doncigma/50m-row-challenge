@@ -34,14 +34,6 @@ table = {
     }
 };
 
-void addTemp(float temp, string cityName) {
-    this = table[cityName]
-    this.sum += temp
-    this.cnt += 1
-    temp < this.min ? this.min = temp : nothing
-    temp > this.max ? this.max = temp : nothing
-}
-
 Over each iteration, we will:
     Parse:
     (1) Check if city name is inside hash table
