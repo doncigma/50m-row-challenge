@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 
 measurements.txt
+output.txt
+out

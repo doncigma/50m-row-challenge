@@ -20,7 +20,7 @@ typedef struct {
 } city;
 
 // SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
-city* search(city* const cities, const size_t size, const char* const searchKey) {
+city* search(city* const cities, const size_t size, const char* searchKey) {
     for (size_t i = 0; i < size; i++) {
         if (strcmp(cities[i].key, searchKey) == 0) {
             return &cities[i];
@@ -54,41 +54,38 @@ city* add(city* const cities, size_t* const size, city* const endptr, const city
     */
 }
 
-// PSD: potential slowdown
-
 int main(int argc, char *argv[]) {
-    int nameLength = 101;
-    int lineLength = 106;
-    int citiesLength = 1001;
-    int strTempLength = 6;
-    
-    city cities[citiesLength];
+    city cities[1000];
     size_t size = sizeof(cities) / sizeof(city);
     city* endptr = cities + size;
 
-    // char cityName[nameLength];
-    // char strTemp[strTempLength];
+    int lineLength = 106; // max chars in name + temp
     char line[lineLength];
 
     const char const* fileName = argv[1];
-    FILE* file = fopen(fileName, "r");
+    FILE* infile = fopen(fileName, "r");
+    const char* ofileName = argv[2];
+    FILE* ofile = fopen(ofileName, "w");
+    if (!infile && !ofile) {
+        fprintf(stderr, "Error: File could not open. Check name and extension.");
+        return -1;
+    }
 
-    while (fgets(line, lineLength, file)) {
-        // Pointer math to parse the city name and temp by the semicolon
+    // Pointer math to parse the city name and temp by the semicolon
+    while (fgets(line, lineLength, infile)) {
         char* delim = strpbrk(line, ";");
         if (delim) {
             char* cityName = line;
             *delim = '\0';
             char* strTemp = delim + 1;
-            printf("City: %s\n", cityName);
-            printf("Temp: %s\n", strTemp);
+
+            // Convert and store
+            fprintf(ofile, "%s;%s", cityName, strTemp);
         }
         else {
-            fprintf(stderr, "Error: No city found");
+            fprintf(stderr, "Error: No city found. Check input file formatting.");
             continue;
         }
-    
-
     
         // // Convert and store
         // float temp = strtof(strTemp, NULL);
@@ -102,4 +99,11 @@ int main(int argc, char *argv[]) {
         //     temp > data.max ? data.max = temp : data.max;
         // }
     }
+
+    fclose(infile);
+
+    // Calculate and Output
+    
+    
+    fclose(ofile);
 }
