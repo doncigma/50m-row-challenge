@@ -9,35 +9,32 @@
 typedef struct {
     float sum;
     int cnt;
-    float avg;
     float min;
     float max;
-} tempObj;
+} tempstruct;
 
 typedef struct {
     char* key;
-    tempObj* tempData;
+    tempstruct* tempData;
 } city;
 
 typedef struct {
     city* cities;
     int size;
     city* endptr;
-    size_t citySize;
-    size_t tempObjSize;
+    size_t citysize;
+    size_t tempsize;
 } citytable;
 
 citytable* createTable() {
     city* cities = malloc(sizeof(city) * TABLESIZE);
-    if (!cities) { return NULL; }
-    
     citytable* table = malloc(sizeof(citytable));
-    if (!table) { free(cities); return NULL; }
+    if (!cities || !table) { free(cities); return NULL; }
 
     table->cities = cities;
     table->size = TABLESIZE;
-    table->citySize = sizeof(city);
-    table->tempObjSize = sizeof(tempObj);
+    table->citysize = sizeof(city);
+    table->tempsize = sizeof(tempstruct);
     table->endptr = cities + TABLESIZE;
     return table;
 }
@@ -53,52 +50,49 @@ city* search(const citytable* const table, const char* const searchKey) {
     return NULL;
 }
 
-city* add(citytable* const table, const char* const key, const float* const temp) {
+/// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
+/// @param table The table being added to.
+/// @param key The city key to add.
+/// @param temp The temp of the city to add.
+/// @return Pointer to the existing or newly constructed city.
+city* add(citytable* const table, char* const key, const float* const temp) {
     // Add temp if already in table
     city* found;
     if (found = search(table, key)) {
-        tempObj* data = found->tempData;
+        tempstruct* data = found->tempData;
         data->sum += *temp;
         data->cnt += 1;
         if (*temp < data->min) data->min = *temp;
         else if (*temp > data->max) data->max = *temp;
         return found;
     }
-    
-    table->size += 1;
-    city* newend = realloc(table->cities, sizeof(city));
-    if (!newend) return NULL;
-    table->endptr = newend;
+    // Make new city and append if not in table
+    else {
+        city* newstart = realloc(table->cities, (table->size + 1) * table->citysize);
+        tempstruct* tempData = malloc(table->tempsize);
+        if (!newstart || !tempData) { free(newstart); free(tempData); return NULL; }
 
-    tempObj* tempData = malloc(sizeof(tempObj));
-    if (!tempData) { realloc(table->cities, sizeof(city) * table->size); return NULL; }
-    tempData->sum = *temp;
-    tempData->cnt = 1;
-    tempData->min = *temp;
-    tempData->max = *temp;
+        table->size += 1;
+        table->cities = newstart;
+        table->endptr = newstart + table->size * table->citysize;
 
-    city* cityadd = malloc(sizeof(city));
-    if (!cityadd) { free(tempData); return NULL; }
-    cityadd->key = key;
-    cityadd->tempData = tempData;
+        tempData->sum = *temp;
+        tempData->cnt = 1;
+        tempData->min = *temp;
+        tempData->max = *temp;
 
-    memcpy(table->endptr, cityadd, sizeof(city));
-    memset(newend, cityadd, sizeof(city));
+        city cityadd;
+        cityadd.key = key;
+        cityadd.tempData = tempData;
 
-    /*
-    // Reallocate memory for the new element
-    city* temp = realloc(*cities, (*size) * sizeof(city));
-    if (temp == NULL) {
-        // Handle allocation failure
-        perror("Failed to allocate memory");
-        return NULL;
+        *(table->endptr - 1) = cityadd;
+        city* newadd = table->endptr - 1;
+
+        // table->cities[table->size - 1] = cityadd;
+        // city* newadd = &table->cities[table->size - 1];
+
+        return newadd;
     }
-    *cities = temp;
-
-    // Set endptr to the correct new end position
-    city* endptr = &(*cities)[*size - 1]; // This points to the new last element, which is valid and contiguous
-    memcpy(endptr, &cityToAdd, sizeof(city)); // Copy data into the newly allocated space
-    */
 }
 
 void destroy(citytable* table) {
@@ -107,36 +101,46 @@ void destroy(citytable* table) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) { fprintf(stderr, "Error: Too few arguements.\n"); return -1; }
-    if (argc > 2) { fprintf(stderr, "Error: Too many arguments.\n"); return -1; }
+    if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
+    if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
 
     const char* fileName = argv[1];
+    const char* ofileName = argv[2];
+
     FILE* infile = fopen(fileName, "r");
-    if (!infile) { fprintf(stderr, "Error: File could not open. Check name and extension.\n"); return -1; }
+    FILE* ofile = fopen(ofileName, "w");
+    if (!infile || !ofile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+
+    // FILE* infile = fopen(fileName, "r");
+    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
 
     citytable* table = createTable();
+    if (!table) { fprintf(stderr, "Err: Problem allocating.\n"); return -1; }
 
     // Pointer math to parse the city name and temp by the semicolon
     int i = 0;
     char line[LINELENGTH];
     while (fgets(line, LINELENGTH, infile)) {
         char* delim = strpbrk(line, ";");
-        if (!delim) { fprintf(stderr, "Error: No city found. Line: %d.\n", i); continue; }
+        if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
         
         *delim = '\0';
         char* strTemp = delim + 1;
 
         // Convert and store
-        city* found;
         float temp = strtof(strTemp, NULL);
-        add(table, line, &temp);
+        city* tmp = add(table, line, &temp);
+        if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
+        
+        fprintf(ofile, "City: %s, Temp: %f, Sum: %f, Cnt: %d, Min: %f, Max: %f\n", tmp->key, temp, tmp->tempData->sum, tmp->tempData->cnt, tmp->tempData->min, tmp->tempData->max);
+
         i++;
     }
 
     fclose(infile);
 
     // Calculate and Output
-    const char* ofileName = argv[2];
-    FILE* ofile = fopen(ofileName, "w");
     fclose(ofile);
+
+    destroy(table);
 }
