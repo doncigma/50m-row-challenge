@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define TABLESIZE 1000
+#define TABLEMAXSIZE 1000
 #define LINELENGTH 106
 
 typedef struct {
@@ -26,26 +26,33 @@ typedef struct {
     size_t tempsizeof;
 } citytable;
 
+char* strdup(const char *str) {
+    char* new = malloc(strlen(str) + 1);
+    if (!new) { fprintf(stderr, "Err: Problem allocating string memory in strdup().\n"); return NULL; }
+    return strcpy(new, str);
+}
+
 citytable* createTable() {
-    city* cities = malloc(sizeof(city) * TABLESIZE);
+    city* cities = malloc(sizeof(city) * TABLEMAXSIZE);
     citytable* table = malloc(sizeof(citytable));
     if (!cities || !table) { free(cities); free(table); return NULL; }
 
     table->cities = cities;
-    table->size = TABLESIZE;
+    table->size = 0;
     table->citysizeof = sizeof(city);
     table->tempsizeof = sizeof(tempstruct);
-    table->endptr = cities + TABLESIZE;
+    table->endptr = cities + TABLEMAXSIZE;
     return table;
 }
 
 // SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
 city* search(const citytable* const table, const char* const key) {
-    for (int i = 0; i < table->size; i++) {
-        if (strcmp(table->cities[i].key, key) == 0)
-            return &table->cities[i];
-    }
+    for (city* iter = table->cities; iter != table->endptr; iter++)
+        if (strcmp(iter->key, key) == 0) return iter;
     return NULL;
+
+    // Hash function
+
 }
 
 /// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
@@ -56,7 +63,7 @@ city* search(const citytable* const table, const char* const key) {
 city* add(citytable* const table, char* const key, const float* const temp) {
     // Add temp if already in table
     city* found;
-    if (found = search(table, key)) {
+    if (table->size > 0 && (found = search(table, key))) {
         tempstruct* data = found->tempData;
         data->sum += *temp;
         data->cnt += 1;
@@ -66,13 +73,14 @@ city* add(citytable* const table, char* const key, const float* const temp) {
     }
     // Make new city and append if not in table
     else {
-        city* newstart = realloc(table->cities, (table->size + 1) * table->citysizeof);
+        char* keydup = strdup(key);
         tempstruct* tempData = malloc(table->tempsizeof);
-        if (!newstart || !tempData) { free(newstart); free(tempData); return NULL; }
+        city* newstart = realloc(table->cities, (TABLEMAXSIZE + 1) * table->citysizeof);
+        if (!keydup || !tempData || !newstart) {free(keydup); free(tempData); free(newstart); return NULL; }
 
         table->size += 1;
         table->cities = newstart;
-        table->endptr = newstart + table->size * table->citysizeof;
+        table->endptr = newstart + table->size * table->citysizeof; // possible calc error here for edge cases: 0, 1, 2, and end
 
         tempData->sum = *temp;
         tempData->cnt = 1;
@@ -80,20 +88,19 @@ city* add(citytable* const table, char* const key, const float* const temp) {
         tempData->max = *temp;
 
         city cityadd;
-        cityadd.key = key;
+        cityadd.key = keydup;
         cityadd.tempData = tempData;
+        memcpy(table->endptr - 1, &cityadd, table->citysizeof); // possible cpy error here in debugger
 
-        *(table->endptr - 1) = cityadd;
-        city* newadd = table->endptr - 1;
-
-        // table->cities[table->size - 1] = cityadd;
-        // city* newadd = &table->cities[table->size - 1];
-
-        return newadd;
+        return table->endptr - 1;
     }
 }
 
 void destroy(citytable* table) {
+    for (city* iter = table->cities; iter != table->endptr; iter++) {
+        free(iter->key);
+        free(iter->tempData);
+    }
     free(table->cities);
     free(table);
 }
