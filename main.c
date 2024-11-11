@@ -22,30 +22,28 @@ typedef struct {
     city* cities;
     int size;
     city* endptr;
-    size_t citysize;
-    size_t tempsize;
+    size_t citysizeof;
+    size_t tempsizeof;
 } citytable;
 
 citytable* createTable() {
     city* cities = malloc(sizeof(city) * TABLESIZE);
     citytable* table = malloc(sizeof(citytable));
-    if (!cities || !table) { free(cities); return NULL; }
+    if (!cities || !table) { free(cities); free(table); return NULL; }
 
     table->cities = cities;
     table->size = TABLESIZE;
-    table->citysize = sizeof(city);
-    table->tempsize = sizeof(tempstruct);
+    table->citysizeof = sizeof(city);
+    table->tempsizeof = sizeof(tempstruct);
     table->endptr = cities + TABLESIZE;
     return table;
 }
 
 // SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
-city* search(const citytable* const table, const char* const searchKey) {
-    city* cities = table->cities;
-    for (size_t i = 0; i < table->size; i++) {
-        if (strcmp(cities[i].key, searchKey) == 0) {
-            return &cities[i];
-        }
+city* search(const citytable* const table, const char* const key) {
+    for (int i = 0; i < table->size; i++) {
+        if (strcmp(table->cities[i].key, key) == 0)
+            return &table->cities[i];
     }
     return NULL;
 }
@@ -68,13 +66,13 @@ city* add(citytable* const table, char* const key, const float* const temp) {
     }
     // Make new city and append if not in table
     else {
-        city* newstart = realloc(table->cities, (table->size + 1) * table->citysize);
-        tempstruct* tempData = malloc(table->tempsize);
+        city* newstart = realloc(table->cities, (table->size + 1) * table->citysizeof);
+        tempstruct* tempData = malloc(table->tempsizeof);
         if (!newstart || !tempData) { free(newstart); free(tempData); return NULL; }
 
         table->size += 1;
         table->cities = newstart;
-        table->endptr = newstart + table->size * table->citysize;
+        table->endptr = newstart + table->size * table->citysizeof;
 
         tempData->sum = *temp;
         tempData->cnt = 1;
@@ -101,11 +99,14 @@ void destroy(citytable* table) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
-    if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
+    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
+    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
 
-    const char* fileName = argv[1];
-    const char* ofileName = argv[2];
+    // const char* fileName = argv[1];
+    // const char* ofileName = argv[2];
+
+    const char* fileName = "test.txt";
+    const char* ofileName = "output.txt";
 
     FILE* infile = fopen(fileName, "r");
     FILE* ofile = fopen(ofileName, "w");
