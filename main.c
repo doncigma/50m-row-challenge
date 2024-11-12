@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define TABLESIZE 1000
 #define LINELENGTH 106
+#define TABLESIZE 1000
 #define CITYNAMELENGTH 101
 
 typedef struct {
@@ -27,14 +27,31 @@ typedef struct {
     size_t tempsizeof;
 } citytable;
 
+#define FNVPRIME 
+#define FNVOFSSET 2166136261U
+
+/// @brief FNV-1a hash implementation.
+/// @param key String to hash.
+/// @return The hashed value divided by table size.
+unsigned long hash(const char* key) {
+    unsigned long hash = 2166136261U; // fnv offset basis
+    unsigned char letter;
+
+    while(letter = *key++) {
+        hash ^= letter;
+        hash *= 16777619; // fnv prime
+    }
+    
+    return hash % TABLESIZE;
+}
+
 // SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
 city* search(citytable* const table, const char* const key) {
     for (city* iter = table->cities; iter != table->endptr; iter++)
         if (strcmp(iter->key, key) == 0) return iter;
     return NULL;
 
-    // Hash function
-
+    // return &table->cities[hash(key)];
 }
 
 /// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
@@ -57,14 +74,15 @@ city* add(citytable* const table, char* const key, const float temp) {
         table->size += 1;
         table->endptr = &table->cities[table->size - 1];
        
-        city* cityadd = table->endptr;
+        city* cityadd = &table->cities[table->size - 1];
+        // city* cityadd = &table->cities[hash(key)];
         strncpy(cityadd->key, key, CITYNAMELENGTH);
         cityadd->tempData.sum = temp;
         cityadd->tempData.cnt = 1;
         cityadd->tempData.min = temp;
         cityadd->tempData.max = temp;
 
-        return table->endptr - 1;
+        return cityadd;
     }
 }
 

@@ -41,3 +41,7 @@ Over each iteration, we will:
         (3) False: Add to table
     Lookup:
     (1) 
+
+Hashing:
+When we insert a value into the hash table, we calculate its hash, modulo by number of elements, and use that as the array index.
+To look up a value, we simply fetch array[hash(key) % 16]. If the array size is a power of two, we can use array[hash(key) & 15]
