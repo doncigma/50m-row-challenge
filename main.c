@@ -75,6 +75,9 @@ int main(int argc, char *argv[]) {
     // const char* fileName = argv[1];
     // const char* ofileName = argv[2];
 
+    // FILE* infile = fopen(fileName, "r");
+    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+    
     const char* fileName = "test.txt";
     // const char* fileName = "measurements.txt";
     const char* ofileName = "output.txt";
@@ -82,9 +85,6 @@ int main(int argc, char *argv[]) {
     FILE* infile = fopen(fileName, "r");
     FILE* ofile = fopen(ofileName, "w");
     if (!infile || !ofile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
-
-    // FILE* infile = fopen(fileName, "r");
-    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
 
     citytable table;
     table.size = 0;
@@ -100,16 +100,12 @@ int main(int argc, char *argv[]) {
         if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
         
         *delim = '\0';
-        char* strtemp = delim + 1;
-        float temp = strtof(strtemp, NULL);
-
+        float temp = strtof(delim + 1, NULL);
         city* tmp = add(&table, line, temp);
-        // if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
+        // city* tmp = add(&table, line, strtof(delim + 1, NULL));
+        if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
 
-        // city* tmp = add(table, line, strtof(delim + 1, NULL));
-        
         fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
-
         i++;
     }
 
