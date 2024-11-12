@@ -45,13 +45,13 @@ unsigned long hash(const char* key) {
     return hash % TABLESIZE;
 }
 
-// SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
 city* search(citytable* const table, const char* const key) {
-    for (city* iter = table->cities; iter != table->endptr; iter++)
-        if (strcmp(iter->key, key) == 0) return iter;
+    // for (city* iter = table->cities; iter != table->endptr; iter++)
+    //     if (strcmp(iter->key, key) == 0) return iter;
+    // return NULL;
+    city* found = &table->cities[hash(key)];
+    if (strcmp(found->key, key) == 0) return found;
     return NULL;
-
-    // return &table->cities[hash(key)];
 }
 
 /// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
@@ -59,7 +59,7 @@ city* search(citytable* const table, const char* const key) {
 /// @param key The city key to add.
 /// @param temp The temp of the city to add.
 /// @return Pointer to the existing or newly constructed city.
-city* add(citytable* const table, char* const key, const float temp) {
+void add(citytable* const table, char* const key, const float temp) {
     // Add temp if already in table
     city* found;
     if (table->size > 0 && (found = search(table, key))) {
@@ -67,7 +67,7 @@ city* add(citytable* const table, char* const key, const float temp) {
         found->tempData.cnt += 1;
         if (temp < found->tempData.min) found->tempData.min = temp;
         else if (temp > found->tempData.max) found->tempData.max = temp;
-        return found;
+        // return found;
     }
     // Make new city and append if not in table
     else {
@@ -82,7 +82,7 @@ city* add(citytable* const table, char* const key, const float temp) {
         cityadd->tempData.min = temp;
         cityadd->tempData.max = temp;
 
-        return cityadd;
+        // return cityadd;
     }
 }
 
@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
     // FILE* infile = fopen(fileName, "r");
     // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
     
-    const char* fileName = "test.txt";
-    // const char* fileName = "measurements.txt";
+    // const char* fileName = "test.txt";
+    const char* fileName = "measurements.txt";
     const char* ofileName = "output.txt";
 
     FILE* infile = fopen(fileName, "r");
@@ -119,18 +119,23 @@ int main(int argc, char *argv[]) {
         
         *delim = '\0';
         float temp = strtof(delim + 1, NULL);
-        city* tmp = add(&table, line, temp);
+        add(&table, line, temp);
         // city* tmp = add(&table, line, strtof(delim + 1, NULL));
-        if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
+        // if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
 
-        fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
+        // fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
         i++;
     }
 
     fclose(infile);
 
     // Calculate and Output
-    fclose(ofile);
+    for (int i = 0; i < table.size; i++) {
+        char* key = table.cities[i].key;
+        tempstruct data = table.cities[i].tempData;
 
-    // destroy(table);
+        fprintf(ofile, "%s,%0.1f,%0.1f,%0.1f\n", key, data.min, data.sum / data.cnt, data.max);
+    }
+
+    fclose(ofile);
 }
