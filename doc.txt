@@ -34,14 +34,6 @@ table = {
     }
 };
 
-void addTemp(float temp, string cityName) {
-    this = table[cityName]
-    this.sum += temp
-    this.cnt += 1
-    temp < this.min ? this.min = temp : nothing
-    temp > this.max ? this.max = temp : nothing
-}
-
 Over each iteration, we will:
     Parse:
     (1) Check if city name is inside hash table
@@ -49,3 +41,7 @@ Over each iteration, we will:
         (3) False: Add to table
     Lookup:
     (1) 
+
+Hashing:
+When we insert a value into the hash table, we calculate its hash, modulo by number of elements, and use that as the array index.
+To look up a value, we simply fetch array[hash(key) % 16]. If the array size is a power of two, we can use array[hash(key) & 15]

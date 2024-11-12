@@ -3,107 +3,134 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define LINELENGTH 106
+#define TABLESIZE 1000
+#define CITYNAMELENGTH 101
+
 typedef struct {
-    char* key;
     float sum;
     int cnt;
-    float avg;
     float min;
     float max;
-} tempObj;
+} tempstruct;
 
 typedef struct {
-    char* key;
-    tempObj tempData;
-    // city* next;
-    // city* prev;
+    char key[CITYNAMELENGTH];
+    tempstruct tempData;
 } city;
 
-// SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
-city* search(city* const cities, const size_t size, const char* searchKey) {
-    for (size_t i = 0; i < size; i++) {
-        if (strcmp(cities[i].key, searchKey) == 0) {
-            return &cities[i];
-        }
+typedef struct {
+    city cities[TABLESIZE];
+    city* endptr;
+    int size;
+    size_t citysizeof;
+    size_t tempsizeof;
+} citytable;
+
+#define FNVPRIME 
+#define FNVOFSSET 2166136261U
+
+/// @brief FNV-1a hash implementation.
+/// @param key String to hash.
+/// @return The hashed value divided by table size.
+unsigned long hash(const char* key) {
+    unsigned long hash = 2166136261U; // fnv offset basis
+    unsigned char letter;
+
+    while(letter = *key++) {
+        hash ^= letter;
+        hash *= 16777619; // fnv prime
     }
-    return NULL;
+    
+    return hash % TABLESIZE;
 }
 
-city* add(city* const cities, size_t* const size, city* const endptr, const city* const cityToAdd, const size_t citySize) {
-    // probably memset some sizeof(city) at the endptr and initliaze to cityToAdd
-    *size += 1;
+// SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
+city* search(citytable* const table, const char* const key) {
+    for (city* iter = table->cities; iter != table->endptr; iter++)
+        if (strcmp(iter->key, key) == 0) return iter;
+    return NULL;
 
-    city* newLoc = realloc(cities, citySize);
-    memcpy(endptr, cityToAdd, (*size) * citySize);
+    // return &table->cities[hash(key)];
+}
 
-    /*
-    // Reallocate memory for the new element
-    city* temp = realloc(*cities, (*size) * sizeof(city));
-    if (temp == NULL) {
-        // Handle allocation failure
-        perror("Failed to allocate memory");
-        return NULL;
+/// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
+/// @param table The table being added to.
+/// @param key The city key to add.
+/// @param temp The temp of the city to add.
+/// @return Pointer to the existing or newly constructed city.
+city* add(citytable* const table, char* const key, const float temp) {
+    // Add temp if already in table
+    city* found;
+    if (table->size > 0 && (found = search(table, key))) {
+        found->tempData.sum += temp;
+        found->tempData.cnt += 1;
+        if (temp < found->tempData.min) found->tempData.min = temp;
+        else if (temp > found->tempData.max) found->tempData.max = temp;
+        return found;
     }
-    *cities = temp;
+    // Make new city and append if not in table
+    else {
+        table->size += 1;
+        table->endptr = &table->cities[table->size - 1];
+       
+        city* cityadd = &table->cities[table->size - 1];
+        // city* cityadd = &table->cities[hash(key)];
+        strncpy(cityadd->key, key, CITYNAMELENGTH);
+        cityadd->tempData.sum = temp;
+        cityadd->tempData.cnt = 1;
+        cityadd->tempData.min = temp;
+        cityadd->tempData.max = temp;
 
-    // Set endptr to the correct new end position
-    city* endptr = &(*cities)[*size - 1]; // This points to the new last element, which is valid and contiguous
-    memcpy(endptr, &cityToAdd, sizeof(city)); // Copy data into the newly allocated space
-
-    return endptr;
-    */
+        return cityadd;
+    }
 }
 
 int main(int argc, char *argv[]) {
-    city cities[1000];
-    size_t size = sizeof(cities) / sizeof(city);
-    city* endptr = cities + size;
+    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
+    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
 
-    int lineLength = 106; // max chars in name + temp
-    char line[lineLength];
+    // const char* fileName = argv[1];
+    // const char* ofileName = argv[2];
 
-    const char const* fileName = argv[1];
+    // FILE* infile = fopen(fileName, "r");
+    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+    
+    const char* fileName = "test.txt";
+    // const char* fileName = "measurements.txt";
+    const char* ofileName = "output.txt";
+
     FILE* infile = fopen(fileName, "r");
-    const char* ofileName = argv[2];
     FILE* ofile = fopen(ofileName, "w");
-    if (!infile && !ofile) {
-        fprintf(stderr, "Error: File could not open. Check name and extension.");
-        return -1;
-    }
+    if (!infile || !ofile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+
+    citytable table;
+    table.size = 0;
+    table.citysizeof = sizeof(city);
+    table.tempsizeof = sizeof(tempstruct);
+    table.endptr = table.cities + TABLESIZE;
 
     // Pointer math to parse the city name and temp by the semicolon
-    while (fgets(line, lineLength, infile)) {
+    int i = 0;
+    char line[LINELENGTH];
+    while (fgets(line, LINELENGTH, infile)) {
         char* delim = strpbrk(line, ";");
-        if (delim) {
-            char* cityName = line;
-            *delim = '\0';
-            char* strTemp = delim + 1;
+        if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
+        
+        *delim = '\0';
+        float temp = strtof(delim + 1, NULL);
+        city* tmp = add(&table, line, temp);
+        // city* tmp = add(&table, line, strtof(delim + 1, NULL));
+        if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
 
-            // Convert and store
-            fprintf(ofile, "%s;%s", cityName, strTemp);
-        }
-        else {
-            fprintf(stderr, "Error: No city found. Check input file formatting.");
-            continue;
-        }
-    
-        // // Convert and store
-        // float temp = strtof(strTemp, NULL);
-        // city* this = search(cities, size, cityName);
-        // if (this) {
-        //     tempObj data = this->tempData;
-            
-        //     data.sum += temp;
-        //     data.cnt += 1;
-        //     temp < data.min ? data.min = temp : data.min;
-        //     temp > data.max ? data.max = temp : data.max;
-        // }
+        fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
+        i++;
     }
 
     fclose(infile);
 
     // Calculate and Output
-    
-    
     fclose(ofile);
+
+    // destroy(table);
 }
