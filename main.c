@@ -2,6 +2,10 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #define LINELENGTH 106
 #define TABLESIZE 1000
@@ -41,8 +45,8 @@ unsigned long hash(const char* key) {
         hash ^= letter;
         hash *= 16777619; // fnv prime
     }
-    hash = hash % TABLESIZE;
-    return hash;
+
+    return hash % TABLESIZE;
 }
 
 city* search(citytable* const table, const char* const key) {
@@ -50,8 +54,8 @@ city* search(citytable* const table, const char* const key) {
     //     if (strcmp(iter->key, key) == 0) return iter;
     // return NULL;
     city* found = &table->cities[hash(key)];
-    if (strcmp(found->key, key) == 0) return found;
-    return NULL;
+    if (strcmp(found->key, key) != 0) found = NULL;
+    return found;
 }
 
 /// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
@@ -64,6 +68,7 @@ void add(citytable* const table, char* const key, const float temp) {
     city* found;
     if (table->size > 0 && (found = search(table, key))) {
         // COLLISIONS
+
         found->tempData.sum += temp;
         found->tempData.cnt += 1;
         if (temp < found->tempData.min) found->tempData.min = temp;
@@ -100,11 +105,17 @@ int main(int argc, char *argv[]) {
     const char* fileName = "measurements.txt";
     const char* ofileName = "output.txt";
 
-    FILE* infile = fopen(fileName, "r");
-    if (!infile) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
+    // FILE* infile = fopen(fileName, "r");
+    // if (!infile) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
+
+    int fd = open(fileName, O_RDONLY);
+    if (fd == -1) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
+
+    struct stat st;
+    if (fstat(fd, &st) == -1) { fprintf(stderr, "Err: Could not retrieve input file metadata.\n"); close(fd); return 1; }
     
-    // float* input = (float*)mmap(NULL, filelength, PROT_READ, MAP_SHARE, infile.filedescriptor, 0);
-    // if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); return 1;}
+    float* input = (float*)mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); close(fd); return 1; }
     
     citytable table;
     table.size = 0;
@@ -116,9 +127,10 @@ int main(int argc, char *argv[]) {
     int i = 0;
     char line[LINELENGTH];
     // for fgets write a custom one because we know size of line (buffer to store to) LINELENGTH * sizeof(string)
-    while (fgets(line, LINELENGTH, infile)) {
+    // while (fgets(line, LINELENGTH, infile)) {
+    while (read(fd, line, sizeof(line)) > 0) {
         char* delim = strpbrk(line, ";");
-        if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
+        if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); i++; continue; }
         
         *delim = '\0';
         float temp = strtof(delim + 1, NULL);
@@ -128,7 +140,9 @@ int main(int argc, char *argv[]) {
         i++;
     }
 
-    fclose(infile);
+    munmap(input, st.st_size);
+    close(fd);
+    // fclose(infile);
 
     // Calculate and Output
     FILE* ofile = fopen(ofileName, "w");
@@ -140,7 +154,6 @@ int main(int argc, char *argv[]) {
         // figure out averages because float math
         // check if float is infinity and if is then do something about the calculation
         double avg = data.sum / data.cnt;
-        if (avg);
 
         fprintf(ofile, "%s,%0.1f,%0.1lf,%0.1f\n", key, data.min, avg, data.max);
     }
