@@ -87,23 +87,22 @@ void add(citytable* const table, char* const key, const float temp) {
 }
 
 int main(int argc, char *argv[]) {
-    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
-    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
+    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return 1; }
+    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
 
     // const char* fileName = argv[1];
     // const char* ofileName = argv[2];
-
-    // FILE* infile = fopen(fileName, "r");
-    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
     
     // const char* fileName = "test.txt";
     const char* fileName = "measurements.txt";
     const char* ofileName = "output.txt";
 
     FILE* infile = fopen(fileName, "r");
-    FILE* ofile = fopen(ofileName, "w");
-    if (!infile || !ofile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+    if (!infile) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
 
+    // float* input = (float*)mmap(NULL, filelength, PROT_READ, MAP_SHARE, file, 0);
+    // if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); return 1;}
+    
     citytable table;
     table.size = 0;
     table.citysizeof = sizeof(city);
@@ -122,14 +121,15 @@ int main(int argc, char *argv[]) {
         add(&table, line, temp);
         // city* tmp = add(&table, line, strtof(delim + 1, NULL));
         // if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
-
-        // fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
         i++;
     }
 
     fclose(infile);
 
     // Calculate and Output
+    FILE* ofile = fopen(ofileName, "w");
+    if (!ofile) { fprintf(stderr, "Err: Output file could not open. Check name and extension.\n"); return 1; }
+
     for (int i = 0; i < table.size; i++) {
         char* key = table.cities[i].key;
         tempstruct data = table.cities[i].tempData;
