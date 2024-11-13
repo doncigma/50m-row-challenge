@@ -8,7 +8,7 @@
 #define CITYNAMELENGTH 101
 
 typedef struct {
-    float sum;
+    double sum;
     int cnt;
     float min;
     float max;
@@ -41,8 +41,8 @@ unsigned long hash(const char* key) {
         hash ^= letter;
         hash *= 16777619; // fnv prime
     }
-    
-    return hash % TABLESIZE;
+    hash = hash % TABLESIZE;
+    return hash;
 }
 
 city* search(citytable* const table, const char* const key) {
@@ -63,6 +63,7 @@ void add(citytable* const table, char* const key, const float temp) {
     // Add temp if already in table
     city* found;
     if (table->size > 0 && (found = search(table, key))) {
+        // COLLISIONS
         found->tempData.sum += temp;
         found->tempData.cnt += 1;
         if (temp < found->tempData.min) found->tempData.min = temp;
@@ -74,8 +75,10 @@ void add(citytable* const table, char* const key, const float temp) {
         table->size += 1;
         table->endptr = &table->cities[table->size - 1];
        
-        city* cityadd = &table->cities[table->size - 1];
-        // city* cityadd = &table->cities[hash(key)];
+        // COLLISIONS
+
+        // city* cityadd = &table->cities[table->size - 1];
+        city* cityadd = &table->cities[hash(key)];
         strncpy(cityadd->key, key, CITYNAMELENGTH);
         cityadd->tempData.sum = temp;
         cityadd->tempData.cnt = 1;
@@ -99,8 +102,8 @@ int main(int argc, char *argv[]) {
 
     FILE* infile = fopen(fileName, "r");
     if (!infile) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
-
-    // float* input = (float*)mmap(NULL, filelength, PROT_READ, MAP_SHARE, file, 0);
+    
+    // float* input = (float*)mmap(NULL, filelength, PROT_READ, MAP_SHARE, infile.filedescriptor, 0);
     // if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); return 1;}
     
     citytable table;
@@ -112,6 +115,7 @@ int main(int argc, char *argv[]) {
     // Pointer math to parse the city name and temp by the semicolon
     int i = 0;
     char line[LINELENGTH];
+    // for fgets write a custom one because we know size of line (buffer to store to) LINELENGTH * sizeof(string)
     while (fgets(line, LINELENGTH, infile)) {
         char* delim = strpbrk(line, ";");
         if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
@@ -133,8 +137,12 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < table.size; i++) {
         char* key = table.cities[i].key;
         tempstruct data = table.cities[i].tempData;
+        // figure out averages because float math
+        // check if float is infinity and if is then do something about the calculation
+        double avg = data.sum / data.cnt;
+        if (avg);
 
-        fprintf(ofile, "%s,%0.1f,%0.1f,%0.1f\n", key, data.min, data.sum / data.cnt, data.max);
+        fprintf(ofile, "%s,%0.1f,%0.1lf,%0.1f\n", key, data.min, avg, data.max);
     }
 
     fclose(ofile);
