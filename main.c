@@ -10,10 +10,6 @@
 #define TABLESIZE 10000
 #define CITYNAMELENGTH 101
 
-#define LINELENGTH 106
-#define TABLESIZE 1000
-#define CITYNAMELENGTH 101
-
 typedef struct {
     double sum;
     int cnt;
