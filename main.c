@@ -49,8 +49,17 @@ int hash(const char* key) {
 }
 
 city* search(citytable* const table, const char* const key) {
-    city* found = &table->cities[hash(key)];
-    if (found && (strcmp(found->key, key) != 0) ) return found;
+    int index = hash(key);
+    int startindex = index;
+    
+    city* found = &table->cities[index];
+    while (table->cities[index].key[0] != '\0') {
+        if (strcmp(table->cities[index].key, key) != 0) return &table->cities[index];
+        
+        index = (index + 1) % TABLESIZE;
+        if (index == startindex) { fprintf(stderr, "Err: Table is full.\n"); return; }
+    }
+    
     return NULL;
 }
 
@@ -61,10 +70,8 @@ city* search(citytable* const table, const char* const key) {
 /// @return Pointer to the existing or newly constructed city.
 void add(citytable* const table, char* const key, const float temp) {
     // Add temp if already in table
-    city* found;
-    if (table->size > 0 && (found = search(table, key))) {
-        // COLLISIONS
-
+    city* found = search(table, key);
+    if (table->size > 0 && found) {
         found->tempData.sum += temp;
         found->tempData.cnt += 1;
         if (temp < found->tempData.min) found->tempData.min = temp;
@@ -72,9 +79,14 @@ void add(citytable* const table, char* const key, const float temp) {
     }
     // Make new city and append if not in table
     else {
-        // COLLISIONS
-
         int index = hash(key);
+        int startindex = index;
+
+        // Collisions 
+        while (table->cities[index].key[0] != '\0') {
+            index = (index + 1) % TABLESIZE;
+            if (index == startindex) { fprintf(stderr, "Err: Table is full.\n"); return; }
+        }
 
         city* cityadd = &table->cities[index];
         strcpy(cityadd->key, key);
