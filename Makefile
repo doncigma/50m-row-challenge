@@ -13,6 +13,9 @@ main: main.c
 o2: main.c
 	$(CC) $(CFLAGS) -O2 -o main main.c
 
+o3: main.c
+	$(CC) $(CFLAGS) -O3 -o main main.c
+
 time:
 	time ./main
 

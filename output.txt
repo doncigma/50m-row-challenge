@@ -1,0 +1,413 @@
+Nairobi,-32.2,17.8,61.5
+Tabora,-23.3,23.0,68.3
+Niamey,-15.6,29.3,72.9
+Douala,-15.7,26.7,69.8
+Kuwait City,-17.0,25.7,66.3
+Livingstone,-22.4,21.8,66.7
+Da Nang,-21.2,25.8,68.0
+Beirut,-22.6,20.9,66.6
+Dikson,-55.8,-11.1,30.0
+Bosaso,-14.6,30.0,72.3
+Toamasina,-20.4,23.4,67.0
+Salt Lake City,-32.6,11.6,56.8
+Antsiranana,-20.8,25.1,76.3
+Willemstad,-15.5,28.0,71.4
+Bloemfontein,-27.1,15.6,59.5
+Luanda,-18.6,25.8,71.3
+Ashgabat,-26.6,17.1,59.8
+Da Lat,-26.9,17.9,61.2
+Sokoto,-15.6,28.0,70.0
+Kolkata,-18.5,26.7,72.6
+Heraklion,-23.6,19.0,61.6
+Vilnius,-35.3,6.0,50.3
+St. Louis,-28.5,13.9,55.8
+Mumbai,-15.7,27.1,73.8
+Saint-Pierre,-35.3,5.7,48.8
+Tegucigalpa,-26.6,21.8,65.9
+Guatemala City,-29.2,20.4,68.8
+Pontianak,-19.3,27.7,70.7
+Aden,-16.1,29.1,76.9
+Changsha,-25.6,17.4,57.4
+San Jose,-31.7,16.4,61.8
+Dunedin,-41.3,11.1,53.5
+Odesa,-37.3,10.7,52.3
+Oslo,-37.1,5.7,50.4
+Burnie,-32.5,13.1,54.8
+Irkutsk,-42.3,1.0,43.5
+Ségou,-22.1,28.0,72.4
+Nuuk,-46.3,-1.4,41.8
+Rostov-on-Don,-30.7,9.9,53.8
+Tamale,-19.4,27.9,83.3
+Ndola,-24.4,20.3,67.2
+Belgrade,-30.7,12.5,57.7
+Dampier,-18.8,26.4,70.6
+İzmir,-22.1,17.9,59.8
+Hobart,-27.3,12.7,64.6
+Veracruz,-18.0,25.4,69.6
+Gjoa Haven,-58.7,-14.4,30.8
+Whitehorse,-42.6,-0.1,45.8
+Hong Kong,-24.7,23.3,69.2
+Ifrane,-33.5,11.4,55.1
+Kathmandu,-23.0,18.3,60.4
+Ghanzi,-21.7,21.4,75.4
+Toliara,-19.6,24.1,66.8
+Bujumbura,-17.4,23.8,65.6
+Malé,-18.3,28.0,71.2
+Monterrey,-22.5,22.3,65.3
+Winnipeg,-40.4,3.0,49.6
+Benghazi,-25.8,19.9,62.6
+Phoenix,-18.0,23.9,67.8
+Madrid,-31.6,15.1,61.2
+Algiers,-24.5,18.3,59.4
+Ljubljana,-29.4,10.9,58.2
+Lake Havasu City,-17.7,23.6,65.0
+London,-29.4,11.3,53.1
+Dili,-14.6,26.5,73.9
+Lahore,-18.8,24.3,66.3
+Reggane,-16.1,28.3,70.6
+Washington, D.C.,-27.4,14.5,58.4
+Mahajanga,-21.8,26.3,79.2
+Astana,-41.5,3.5,50.0
+Tallinn,-42.9,6.4,47.6
+Istanbul,-32.6,13.9,59.4
+Tashkent,-28.0,14.8,58.0
+Mexico City,-26.0,17.5,60.7
+Tel Aviv,-23.9,20.0,62.8
+Indianapolis,-32.8,11.8,54.2
+Ouahigouya,-14.0,28.6,72.2
+Podgorica,-23.9,15.3,67.0
+Honiara,-15.5,26.5,69.1
+N'Djamena,-19.0,28.3,75.8
+Lubumbashi,-26.1,20.8,66.9
+Addis Ababa,-27.1,16.0,58.7
+Lagos,-15.0,26.8,70.8
+Juba,-15.9,27.8,69.8
+Oklahoma City,-27.6,16.0,57.4
+Maun,-20.1,22.4,64.9
+Valletta,-22.2,18.9,67.2
+Las Vegas,-27.3,20.3,65.9
+Halifax,-33.7,7.5,50.0
+Muscat,-14.3,28.0,69.1
+Dubai,-14.4,26.9,69.4
+Palm Springs,-17.2,24.5,69.3
+Darwin,-16.6,27.6,71.6
+Makassar,-20.4,26.7,71.3
+Taipei,-22.2,23.0,63.0
+Riyadh,-14.5,26.0,79.1
+Libreville,-25.4,25.9,65.8
+Fukuoka,-30.1,17.0,60.0
+Nouakchott,-20.6,25.6,68.9
+Calgary,-42.3,4.4,45.9
+Garoua,-16.8,28.3,71.8
+Helsinki,-38.2,5.9,47.0
+Palembang,-16.9,27.3,69.3
+Upington,-21.4,20.4,70.2
+Bulawayo,-28.1,18.9,60.4
+Marseille,-26.6,15.8,62.6
+Hanga Roa,-26.5,20.5,66.3
+Memphis,-29.7,17.2,68.0
+Jerusalem,-25.9,18.3,57.8
+Seville,-24.3,19.2,61.2
+Porto,-27.2,15.7,59.7
+Saskatoon,-41.5,3.3,49.8
+Melbourne,-24.8,15.1,58.7
+Colombo,-18.9,27.4,68.4
+Edmonton,-44.2,4.2,51.6
+Kyoto,-25.9,15.8,65.6
+Chihuahua,-25.8,18.6,61.8
+Asmara,-28.7,15.5,57.5
+Sydney,-24.1,17.7,61.8
+Maputo,-25.4,22.8,66.3
+Suwałki,-38.3,7.2,50.7
+Ulaanbaatar,-41.9,-0.4,41.4
+Harbin,-40.4,5.0,46.5
+Guadalajara,-23.2,21.0,61.9
+Garissa,-20.1,29.3,76.4
+Lomé,-16.9,26.9,72.3
+Kinshasa,-16.2,25.3,71.0
+Minsk,-35.0,6.7,55.1
+Mexicali,-21.4,23.1,65.5
+Kansas City,-29.0,12.5,61.4
+Hargeisa,-22.5,21.7,64.2
+Vancouver,-32.1,10.4,50.3
+Christchurch,-28.8,12.2,58.9
+Odienné,-19.7,26.0,69.8
+Novosibirsk,-43.7,1.7,49.2
+Tokyo,-36.0,15.4,56.7
+Yakutsk,-53.3,-8.7,34.5
+Albuquerque,-34.8,14.0,57.1
+Bamako,-15.1,27.8,72.0
+Fianarantsoa,-23.8,17.9,62.7
+Antananarivo,-23.9,17.9,65.4
+Villahermosa,-15.6,27.0,73.9
+Palermo,-23.4,18.5,61.9
+Jacksonville,-25.8,20.3,65.0
+Tauranga,-30.8,14.8,59.0
+Karachi,-18.0,26.0,71.0
+New Delhi,-21.2,24.9,71.9
+Dolisie,-20.0,24.0,71.0
+Barcelona,-29.5,18.2,67.2
+Roseau,-18.0,26.2,67.8
+Montreal,-36.4,6.8,48.9
+Erbil,-24.3,19.5,64.2
+Sarajevo,-32.3,10.1,54.9
+Singapore,-11.8,27.0,68.1
+Harare,-29.4,18.4,59.7
+Baltimore,-29.2,13.1,56.7
+Panama City,-17.1,28.0,74.2
+Dushanbe,-30.3,14.7,57.1
+Mogadishu,-19.0,27.1,68.0
+Lusaka,-23.3,19.9,60.9
+Toluca,-30.1,12.4,59.5
+Vaduz,-34.2,10.1,54.2
+Cotonou,-21.8,27.2,71.0
+Virginia Beach,-29.9,15.8,58.9
+Ouarzazate,-27.7,18.9,62.2
+Hamilton,-29.0,13.8,56.7
+Andorra la Vella,-34.7,9.8,54.4
+Tirana,-24.6,15.3,60.5
+Tripoli,-21.0,20.0,63.8
+Brisbane,-24.0,21.4,66.4
+Edinburgh,-31.4,9.3,52.9
+Kuopio,-40.9,3.4,46.6
+Chongqing,-24.1,18.6,59.8
+San Salvador,-20.5,23.2,67.7
+Omaha,-33.3,10.6,56.6
+Bratislava,-32.5,10.5,54.0
+Bordeaux,-28.5,14.2,56.4
+Managua,-24.6,27.3,71.4
+Yangon,-22.8,27.5,71.2
+Tbilisi,-28.8,12.9,57.2
+Kingston,-17.1,27.4,69.5
+Busan,-28.2,15.0,62.3
+Jakarta,-14.6,26.7,70.6
+Arkhangelsk,-41.0,1.3,48.2
+Assab,-15.7,30.5,71.8
+Houston,-21.7,20.8,62.2
+Entebbe,-22.0,21.0,68.1
+Manila,-13.6,28.4,73.7
+Brazzaville,-18.7,25.0,73.1
+City of San Marino,-32.2,11.8,55.7
+Ahvaz,-16.2,25.4,72.4
+Ouagadougou,-15.2,28.3,68.7
+Austin,-25.8,20.6,67.2
+Nicosia,-24.2,19.7,62.9
+Saint Petersburg,-39.2,5.8,46.8
+Mandalay,-19.3,28.0,75.2
+Johannesburg,-26.2,15.6,56.6
+Tehran,-24.5,17.0,63.8
+Lviv,-37.0,7.8,49.1
+Adelaide,-26.9,17.3,62.7
+Valencia,-28.7,18.3,62.6
+Launceston,-28.6,13.1,58.4
+Vladivostok,-34.3,4.9,46.9
+Seoul,-33.2,12.5,56.6
+Bangui,-22.0,26.0,70.5
+Kyiv,-35.3,8.4,52.0
+Birao,-15.6,26.5,73.9
+Tampa,-17.4,22.9,67.6
+Cracow,-32.3,9.3,53.8
+Yaoundé,-23.3,23.8,67.5
+Kampala,-23.5,19.9,62.9
+Frankfurt,-36.5,10.6,52.3
+Yellowknife,-47.1,-4.3,39.7
+San Antonio,-26.6,20.8,68.2
+Moncton,-41.4,6.1,52.9
+Sofia,-34.8,10.6,54.0
+Copenhagen,-33.0,9.1,53.1
+Rangpur,-16.9,24.4,72.0
+Jayapura,-16.2,27.0,75.8
+Port-Gentil,-23.4,25.9,67.3
+Xi'an,-27.2,14.0,59.4
+Iqaluit,-55.9,-9.3,34.8
+Kabul,-29.9,12.1,60.2
+Bishkek,-34.8,11.3,56.3
+Baku,-30.5,15.1,56.2
+Baghdad,-20.8,22.8,63.6
+Philadelphia,-31.3,13.2,52.8
+Warsaw,-34.7,8.5,64.9
+Oranjestad,-14.9,28.2,71.7
+La Paz,-16.8,23.7,66.7
+Bissau,-14.8,27.0,71.2
+Flores,  Petén,-15.4,26.4,71.2
+New Orleans,-20.4,20.7,64.5
+Cape Town,-24.5,16.2,61.5
+Guangzhou,-20.6,22.4,63.0
+Alexandra,-37.1,11.0,53.7
+Hamburg,-34.8,9.6,51.2
+Malabo,-16.7,26.3,71.7
+Thiès,-18.1,24.0,68.6
+Gabès,-22.5,19.5,60.0
+Dublin,-32.7,9.8,52.0
+New York City,-31.1,12.9,59.7
+Lodwar,-15.9,29.3,79.2
+George Town,-14.7,27.9,72.2
+Fresno,-22.3,17.9,63.2
+Tabriz,-35.4,12.6,60.1
+Santo Domingo,-19.4,25.9,71.7
+Pittsburgh,-42.3,10.8,55.5
+Kano,-17.1,26.4,70.8
+Kunming,-27.4,15.7,60.2
+Ankara,-31.7,12.0,60.7
+Columbus,-32.6,11.7,59.1
+Port Sudan,-14.7,28.4,73.9
+Milan,-29.7,13.0,56.6
+Lisbon,-26.5,17.5,61.9
+Ottawa,-39.5,6.6,49.3
+Sacramento,-26.5,16.4,57.0
+Tucson,-21.7,20.9,62.2
+Ürümqi,-37.8,7.4,49.8
+Fairbanks,-51.2,-2.2,45.9
+La Ceiba,-18.2,26.2,71.5
+Hat Yai,-15.9,27.0,70.8
+Chicago,-32.3,9.8,55.8
+Marrakesh,-23.7,19.6,60.8
+Napier,-37.2,14.6,62.2
+Napoli,-25.6,15.9,60.5
+Erzurum,-39.1,5.1,49.4
+Stockholm,-36.2,6.6,47.8
+Chittagong,-15.0,25.9,68.7
+Petropavlovsk-Kamchatsky,-39.2,1.9,52.1
+El Paso,-24.5,18.2,61.5
+Nakhon Ratchasima,-15.9,27.3,69.4
+Rome,-27.6,15.1,57.3
+Havana,-19.6,25.2,66.9
+Suva,-21.6,25.6,67.8
+Athens,-25.6,19.2,64.5
+Alice Springs,-24.2,21.0,65.0
+Anadyr,-49.5,-6.9,40.7
+Canberra,-34.3,13.1,61.5
+Yinchuan,-36.4,9.0,53.5
+San Francisco,-29.4,14.6,57.6
+Gangtok,-27.6,15.2,60.7
+Reykjavík,-44.6,4.3,47.9
+Djibouti,-16.4,29.9,74.0
+Paris,-28.8,12.3,54.8
+Anchorage,-43.3,2.8,45.3
+Medan,-15.2,26.5,72.3
+Praia,-17.2,24.4,69.4
+Bilbao,-37.0,14.7,58.3
+Riga,-43.3,6.2,50.2
+Beijing,-31.5,12.9,58.7
+Split,-28.3,16.1,58.7
+Batumi,-31.3,14.0,55.9
+Boston,-33.6,10.9,54.3
+Berlin,-33.3,10.3,57.2
+Cairns,-19.1,25.0,72.4
+Monaco,-30.6,16.4,57.9
+Detroit,-34.3,10.0,51.4
+Alexandria,-19.5,20.0,66.4
+Manama,-26.0,26.5,69.2
+Port Vila,-16.3,24.3,67.5
+Bangkok,-15.9,28.6,72.0
+Niigata,-29.1,13.9,57.4
+Dallas,-23.1,19.0,63.4
+Oulu,-45.4,2.7,46.2
+Brussels,-29.9,10.5,55.9
+Wichita,-27.8,13.9,58.8
+Timbuktu,-15.9,28.0,70.8
+Durban,-25.8,20.6,67.2
+Wrocław,-36.2,9.6,60.8
+Wau,-17.4,27.8,72.2
+Mzuzu,-23.8,17.7,62.0
+Khartoum,-16.6,29.9,71.1
+Hanoi,-17.0,23.6,69.8
+Jos,-19.1,22.8,69.9
+Naha,-18.5,23.1,69.5
+Boise,-32.4,11.3,61.1
+Pyongyang,-35.2,10.8,56.6
+Mombasa,-18.7,26.3,68.2
+San Diego,-27.9,17.8,64.6
+Kuala Lumpur,-14.2,27.3,70.8
+St. John's,-41.4,5.0,50.4
+Shanghai,-33.9,16.7,58.1
+Lyon,-28.9,12.5,53.8
+Seattle,-35.8,11.3,64.2
+Conakry,-16.0,26.4,73.3
+Abha,-22.2,18.0,59.6
+Skopje,-30.9,12.4,55.7
+Thessaloniki,-33.1,16.0,58.0
+Gagnoa,-19.0,26.0,71.1
+Zürich,-32.2,9.3,53.4
+Tunis,-22.9,18.4,61.8
+Vienna,-32.5,10.4,57.4
+Vientiane,-16.4,25.9,66.2
+Lhasa,-34.7,7.6,54.6
+Auckland,-25.6,15.2,60.6
+Miami,-18.6,24.9,70.9
+Moscow,-43.8,5.8,47.0
+Belize City,-13.8,26.7,70.8
+Dodoma,-18.0,22.7,66.3
+Luxembourg City,-32.9,9.4,56.5
+Las Palmas de Gran Canaria,-19.6,21.2,67.8
+Port Moresby,-16.7,26.9,68.7
+San Juan,-15.6,27.1,71.5
+Milwaukee,-33.4,8.9,56.0
+Accra,-17.7,26.4,69.3
+Hiroshima,-26.0,16.3,60.2
+Dhaka,-26.9,25.9,67.8
+Perth,-25.4,18.7,60.1
+Bridgetown,-16.8,27.0,69.1
+Zanzibar City,-24.5,26.0,70.4
+Abidjan,-15.5,26.0,68.1
+Abéché,-17.9,29.4,69.5
+Denver,-31.5,10.4,54.1
+Tijuana,-28.5,17.9,58.8
+Kankan,-18.9,26.5,76.2
+Nouadhibou,-21.4,21.3,67.1
+Baguio,-24.2,19.5,64.0
+Portland (OR),-31.6,12.4,55.6
+Tromsø,-44.1,3.0,48.9
+Lake Tekapo,-36.8,8.7,51.5
+Sana'a,-21.3,20.0,68.4
+Toronto,-36.5,9.4,50.9
+Dakar,-19.1,24.0,64.2
+Sapporo,-34.9,8.9,53.7
+Cabo San Lucas,-20.1,23.9,64.8
+Nashville,-30.5,15.4,65.9
+Mango,-18.2,28.1,69.5
+Ho Chi Minh City,-24.4,27.4,73.2
+Honolulu,-16.9,25.4,71.9
+Pointe-Noire,-15.4,26.1,68.6
+Bouaké,-18.9,26.0,67.1
+San José,-23.9,22.6,75.6
+Wellington,-32.1,12.9,57.9
+Bergen,-37.9,7.7,54.4
+Mek'ele,-18.6,22.7,77.5
+Banjul,-19.2,26.0,68.4
+Atlanta,-30.0,17.0,59.6
+Louisville,-27.5,13.9,58.9
+Los Angeles,-27.0,18.6,61.5
+Kandi,-14.8,27.8,70.5
+Bucharest,-33.3,10.8,56.3
+Kumasi,-15.9,26.0,69.2
+Almaty,-33.6,10.0,53.9
+Tamanrasset,-21.3,21.6,65.8
+Surabaya,-17.4,27.1,71.5
+Ngaoundéré,-28.1,22.0,63.7
+Dar es Salaam,-17.6,25.8,70.7
+Phnom Penh,-13.4,28.3,72.0
+Bata,-17.6,25.1,65.7
+Gaborone,-25.0,21.0,63.7
+Nassau,-27.2,24.6,65.3
+Prague,-38.9,8.4,57.6
+Makurdi,-17.9,26.0,71.0
+Amsterdam,-33.9,10.2,53.1
+Damascus,-26.7,17.0,61.2
+Minneapolis,-32.7,7.8,52.7
+Chiang Mai,-24.9,25.9,68.9
+Blantyre,-26.4,22.2,67.3
+Denpasar,-19.9,23.7,68.4
+Rabat,-26.0,17.2,60.7
+Chișinău,-37.3,10.2,55.0
+Yerevan,-28.1,12.4,54.7
+Cairo,-26.8,21.4,67.7
+Budapest,-30.0,11.3,55.6
+Charlotte,-23.5,16.1,60.4
+Sochi,-29.6,14.2,59.8
+Karonga,-19.5,24.4,69.8
+Palmerston North,-31.1,13.2,57.4
+Zagreb,-39.8,10.7,61.1
+Pretoria,-25.6,18.2,61.0
+Murmansk,-47.9,0.6,42.4
+Parakou,-19.2,26.8,71.0

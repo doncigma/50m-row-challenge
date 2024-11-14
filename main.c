@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#define TABLESIZE 1000
+#define TABLESIZE 10000
 #define CITYNAMELENGTH 101
 
 typedef struct {
@@ -24,10 +24,7 @@ typedef struct {
 
 typedef struct {
     city cities[TABLESIZE];
-    city* endptr;
     int size;
-    size_t citysizeof;
-    size_t tempsizeof;
 } citytable;
 
 #define FNVPRIME 16777619
@@ -51,15 +48,16 @@ int hash(const char* key) {
 city* search(citytable* const table, const char* const key) {
     int index = hash(key);
     int startindex = index;
-    
-    city* found = &table->cities[index];
-    while (table->cities[index].key[0] != '\0') {
-        if (strcmp(table->cities[index].key, key) != 0) return &table->cities[index];
+
+    while (table->cities[index].key[0]) {
+        if (strcmp(table->cities[index].key, key) == 0) {
+            return &table->cities[index];
+        }
         
         index = (index + 1) % TABLESIZE;
-        if (index == startindex) { fprintf(stderr, "Err: Table is full.\n"); return; }
+        if (index == startindex) { fprintf(stderr, "Err: Could not find key in search.\n"); return NULL; }
     }
-    
+
     return NULL;
 }
 
@@ -79,13 +77,13 @@ void add(citytable* const table, char* const key, const float temp) {
     }
     // Make new city and append if not in table
     else {
+        // Collision handling
         int index = hash(key);
         int startindex = index;
 
-        // Collisions 
         while (table->cities[index].key[0] != '\0') {
             index = (index + 1) % TABLESIZE;
-            if (index == startindex) { fprintf(stderr, "Err: Table is full.\n"); return; }
+            if (index == startindex) { fprintf(stderr, "Err: Could not add, table is full.\n"); return; }
         }
 
         city* cityadd = &table->cities[index];
@@ -96,20 +94,15 @@ void add(citytable* const table, char* const key, const float temp) {
         cityadd->tempData.max = temp;
 
         table->size += 1;
-        table->endptr = &table->cities[table->size - 1];
     }
 }
 
 int main(int argc, char *argv[]) {
-    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return 1; }
-    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
+    if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return 1; }
+    if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
 
-    // const char* fileName = argv[1];
-    // const char* ofileName = argv[2];
-    
-    // const char* fileName = "test.txt";
-    const char* fileName = "measurements.txt";
-    const char* ofileName = "output.txt";
+    const char* fileName = argv[1];
+    const char* ofileName = argv[2];
 
     int fd = open(fileName, O_RDONLY);
     if (fd == -1) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
@@ -121,12 +114,10 @@ int main(int argc, char *argv[]) {
     if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); close(fd); return 1; }
     
     citytable table;
+    memset(table.cities, 0, TABLESIZE * sizeof(city));
     table.size = 0;
-    table.citysizeof = sizeof(city);
-    table.tempsizeof = sizeof(tempstruct);
-    table.endptr = table.cities + TABLESIZE;
 
-    // Pointer math to parse the city name and temp by the semicolon
+    // Pointer math to slice the city name and temp by the semicolon
     int i = 0;
     char* currline = input;
     char* end = input + st.st_size;
@@ -157,19 +148,12 @@ int main(int argc, char *argv[]) {
     FILE* ofile = fopen(ofileName, "w");
     if (!ofile) { fprintf(stderr, "Err: Output file could not open. Check name and extension.\n"); return 1; }
 
-    // int fd = open(ofileName, O_WRONLY);
-    // if (fd == -1) { fprintf(stderr, "Err: Output file could not open. Check name and extension.\n"); return 1; }
+    for (int k = 0; k < TABLESIZE; k++) {
+        char* key = table.cities[k].key;
+        if (!*key) continue;
+        tempstruct data = table.cities[k].tempData;
 
-    for (int i = 0; i < table.size; i++) {
-        char* key = table.cities[i].key;
-        tempstruct data = table.cities[i].tempData;
-        // figure out averages because float math
-        // check if float is infinity and if is then do something about the calculation
-        double avg = data.sum / data.cnt;
-
-        fprintf(ofile, "%s,%0.1f,%0.1lf,%0.1f\n", key, data.min, avg, data.max);
-        // char line[] = ""
-        // write(fd, );
+        fprintf(ofile, "%s,%0.1f,%0.1lf,%0.1f\n", key, data.min, (double)data.sum / data.cnt, data.max);
     }
 
     fclose(ofile);
