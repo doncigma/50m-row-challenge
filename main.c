@@ -157,4 +157,6 @@ int main(int argc, char *argv[]) {
     }
 
     fclose(ofile);
+
+    // destroy(table);
 }
