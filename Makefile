@@ -24,4 +24,4 @@ mem:
 
 # Clean up generated files
 clean:
-	rm -f main main_O2 main_debug main_debug_O2
+	rm -f main
