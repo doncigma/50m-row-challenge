@@ -2,13 +2,20 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+#define TABLESIZE 10000
+#define CITYNAMELENGTH 101
 
 #define LINELENGTH 106
 #define TABLESIZE 1000
 #define CITYNAMELENGTH 101
 
 typedef struct {
-    float sum;
+    double sum;
     int cnt;
     float min;
     float max;
@@ -21,37 +28,41 @@ typedef struct {
 
 typedef struct {
     city cities[TABLESIZE];
-    city* endptr;
     int size;
-    size_t citysizeof;
-    size_t tempsizeof;
 } citytable;
 
-#define FNVPRIME 
+#define FNVPRIME 16777619
 #define FNVOFSSET 2166136261U
 
 /// @brief FNV-1a hash implementation.
 /// @param key String to hash.
 /// @return The hashed value divided by table size.
-unsigned long hash(const char* key) {
-    unsigned long hash = 2166136261U; // fnv offset basis
+int hash(const char* key) {
+    unsigned long hash = FNVOFSSET;
     unsigned char letter;
 
-    while(letter = *key++) {
+    while((letter = *key++)) {
         hash ^= letter;
-        hash *= 16777619; // fnv prime
+        hash *= FNVPRIME;
     }
-    
+
     return hash % TABLESIZE;
 }
 
-// SLOWDOWN: Need to improve this to O(1) lookup with a custom hash function
 city* search(citytable* const table, const char* const key) {
-    for (city* iter = table->cities; iter != table->endptr; iter++)
-        if (strcmp(iter->key, key) == 0) return iter;
-    return NULL;
+    int index = hash(key);
+    int startindex = index;
 
-    // return &table->cities[hash(key)];
+    while (table->cities[index].key[0]) {
+        if (strcmp(table->cities[index].key, key) == 0) {
+            return &table->cities[index];
+        }
+        
+        index = (index + 1) % TABLESIZE;
+        if (index == startindex) { fprintf(stderr, "Err: Could not find key in search.\n"); return NULL; }
+    }
+
+    return NULL;
 }
 
 /// @brief Attempts to add a city to the table. If key is already in the table, it updates its values with new temp. Otherwise, it constructs a new city and appends.
@@ -59,77 +70,96 @@ city* search(citytable* const table, const char* const key) {
 /// @param key The city key to add.
 /// @param temp The temp of the city to add.
 /// @return Pointer to the existing or newly constructed city.
-city* add(citytable* const table, char* const key, const float temp) {
+void add(citytable* const table, char* const key, const float temp) {
     // Add temp if already in table
-    city* found;
-    if (table->size > 0 && (found = search(table, key))) {
+    city* found = search(table, key);
+    if (table->size > 0 && found) {
         found->tempData.sum += temp;
         found->tempData.cnt += 1;
         if (temp < found->tempData.min) found->tempData.min = temp;
         else if (temp > found->tempData.max) found->tempData.max = temp;
-        return found;
     }
     // Make new city and append if not in table
     else {
-        table->size += 1;
-        table->endptr = &table->cities[table->size - 1];
-       
-        city* cityadd = &table->cities[table->size - 1];
-        // city* cityadd = &table->cities[hash(key)];
-        strncpy(cityadd->key, key, CITYNAMELENGTH);
+        // Collision handling
+        int index = hash(key);
+        int startindex = index;
+
+        while (table->cities[index].key[0] != '\0') {
+            index = (index + 1) % TABLESIZE;
+            if (index == startindex) { fprintf(stderr, "Err: Could not add, table is full.\n"); return; }
+        }
+
+        city* cityadd = &table->cities[index];
+        strcpy(cityadd->key, key);
         cityadd->tempData.sum = temp;
         cityadd->tempData.cnt = 1;
         cityadd->tempData.min = temp;
         cityadd->tempData.max = temp;
 
-        return cityadd;
+        table->size += 1;
     }
 }
 
 int main(int argc, char *argv[]) {
-    // if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return -1; }
-    // if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return -1; }
+    if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return 1; }
+    if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
 
-    // const char* fileName = argv[1];
-    // const char* ofileName = argv[2];
+    const char* fileName = argv[1];
+    const char* ofileName = argv[2];
 
-    // FILE* infile = fopen(fileName, "r");
-    // if (!infile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
+    int fd = open(fileName, O_RDONLY);
+    if (fd == -1) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
+
+    struct stat st;
+    if (fstat(fd, &st) == -1) { fprintf(stderr, "Err: Could not retrieve input file metadata.\n"); close(fd); return 1; }
     
-    const char* fileName = "test.txt";
-    // const char* fileName = "measurements.txt";
-    const char* ofileName = "output.txt";
-
-    FILE* infile = fopen(fileName, "r");
-    FILE* ofile = fopen(ofileName, "w");
-    if (!infile || !ofile) { fprintf(stderr, "Err: File could not open. Check name and extension.\n"); return -1; }
-
+    char* input = (char*)mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); close(fd); return 1; }
+    
     citytable table;
+    memset(table.cities, 0, TABLESIZE * sizeof(city));
     table.size = 0;
-    table.citysizeof = sizeof(city);
-    table.tempsizeof = sizeof(tempstruct);
-    table.endptr = table.cities + TABLESIZE;
 
-    // Pointer math to parse the city name and temp by the semicolon
+    // Pointer math to slice the city name and temp by the semicolon
     int i = 0;
-    char line[LINELENGTH];
-    while (fgets(line, LINELENGTH, infile)) {
-        char* delim = strpbrk(line, ";");
-        if (!delim) { fprintf(stderr, "Err: No city found. Line: %d.\n", i); continue; }
+    char* currline = input;
+    char* end = input + st.st_size;
+    while (currline != end) {
+        char* newline = strpbrk(currline, "\n");
+        if (!newline) { currline = end; continue; }
+
+        size_t len = newline - currline; // excludes newline char
+        char addline[len + 1];
+        memcpy(addline, currline, len);
+        addline[len] = '\0';
+
+        char* delim = strpbrk(addline, ";");
+        if (!delim) { fprintf(stderr, "Err: No city found. Skipping line: %d.\n", i); currline = newline + 1; i++; continue; }
         
         *delim = '\0';
         float temp = strtof(delim + 1, NULL);
-        city* tmp = add(&table, line, temp);
-        // city* tmp = add(&table, line, strtof(delim + 1, NULL));
-        if (!tmp) { fprintf(stderr, "Err: Problem allocating memory while adding. Line: %d.\n", i); continue; }
+        add(&table, addline, temp);
 
-        fprintf(ofile, "City: %s, Temp: %0.1f, Sum: %0.1f, Cnt: %d, Min: %0.1f, Max: %0.1f\n", tmp->key, temp, tmp->tempData.sum, tmp->tempData.cnt, tmp->tempData.min, tmp->tempData.max);
+        currline = newline + 1;
         i++;
     }
 
-    fclose(infile);
+    munmap(input, st.st_size);
+    close(fd);
 
     // Calculate and Output
+    FILE* ofile = fopen(ofileName, "w");
+    if (!ofile) { fprintf(stderr, "Err: Output file could not open. Check name and extension.\n"); return 1; }
+
+    for (int k = 0; k < TABLESIZE; k++) {
+        char* key = table.cities[k].key;
+        if (!*key) continue;
+        tempstruct data = table.cities[k].tempData;
+
+        fprintf(ofile, "%s,%0.1f,%0.1lf,%0.1f\n", key, data.min, (double)data.sum / data.cnt, data.max);
+    }
+
     fclose(ofile);
 
     // destroy(table);
