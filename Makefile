@@ -1,27 +1,19 @@
-# Compiler and compiler flags
-CC = gcc
-CFLAGS = -Wall
+all: o2
 
-# Targets
-all: main
-
-# Default target (builds without extra flags)
 main: main.c
-	$(CC) $(CFLAGS) -o main main.c
+	gcc -Wall -o process_measurements main.c
 
-# Compile with optimization level O2
 o2: main.c
-	$(CC) $(CFLAGS) -O2 -o main main.c
+	gcc -Wall -O2 -o process_measurements main.c
 
 o3: main.c
-	$(CC) $(CFLAGS) -O3 -o main main.c
+	gcc -Wall -O3 -o process_measurements main.c
 
 time:
-	time ./main
+	time ./process_measurements
 
 mem:
-	valgrind --leak-check=full ./main
+	valgrind --leak-check=full ./process_measurements
 
-# Clean up generated files
 clean:
-	rm -f main
+	rm -f process_measurements
