@@ -50,6 +50,7 @@ city* search(citytable* const table, const char* const key) {
     int startindex = index;
 
     while (table->cities[index].key[0]) {
+        // TODO: dont use strcmp and do custom parsing
         if (strcmp(table->cities[index].key, key) == 0) {
             return &table->cities[index];
         }
@@ -58,6 +59,8 @@ city* search(citytable* const table, const char* const key) {
         if (index == startindex) { fprintf(stderr, "Err: Could not find key in search.\n"); return NULL; }
     }
 
+    // TODO: dont just throw away an empty spot we found,
+    // pass it back so add has it for the else indexing
     return NULL;
 }
 
@@ -87,7 +90,7 @@ void add(citytable* const table, char* const key, const float temp) {
         }
 
         city* cityadd = &table->cities[index];
-        strcpy(cityadd->key, key);
+        strcpy(cityadd->key, key); // TODO: dont use strcpy
         cityadd->tempData.sum = temp;
         cityadd->tempData.cnt = 1;
         cityadd->tempData.min = temp;
@@ -99,10 +102,10 @@ void add(citytable* const table, char* const key, const float temp) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) { fprintf(stderr, "Err: Too few arguements.\n"); return 1; }
-    if (argc > 3) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
+    if (argc > 2) { fprintf(stderr, "Err: Too many arguments.\n"); return 1; }
 
     const char* fileName = argv[1];
-    const char* ofileName = argv[2];
+    const char* ofileName = "./output.txt";
 
     int fd = open(fileName, O_RDONLY);
     if (fd == -1) { fprintf(stderr, "Err: Input file could not open. Check name and extension.\n"); return 1; }
@@ -112,6 +115,7 @@ int main(int argc, char *argv[]) {
     
     char* input = (char*)mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (input == (void*)-1) { fprintf(stderr, "Mmap failed.\n"); close(fd); return 1; }
+    // TODO: add madvise() call here with flags to signal kernel how we use this mem, MADV_SEQUENTIAL, etc.
     
     citytable table;
     memset(table.cities, 0, TABLESIZE * sizeof(city));
@@ -127,14 +131,14 @@ int main(int argc, char *argv[]) {
 
         size_t len = newline - currline; // excludes newline char
         char addline[len + 1];
-        memcpy(addline, currline, len);
+        memcpy(addline, currline, len); // TODO: dont use memcpy
         addline[len] = '\0';
 
-        char* delim = strpbrk(addline, ";");
+        char* delim = strpbrk(addline, ";"); // TODO: dont use strpbrk, use memchr
         if (!delim) { fprintf(stderr, "Err: No city found. Skipping line: %d.\n", i); currline = newline + 1; i++; continue; }
         
         *delim = '\0';
-        float temp = strtof(delim + 1, NULL);
+        float temp = strtof(delim + 1, NULL); // TODO: dont use strtof
         add(&table, addline, temp);
 
         currline = newline + 1;
@@ -146,7 +150,7 @@ int main(int argc, char *argv[]) {
 
     // Calculate and Output
     FILE* ofile = fopen(ofileName, "w");
-    if (!ofile) { fprintf(stderr, "Err: Output file could not open. Check name and extension.\n"); return 1; }
+    if (!ofile) { fprintf(stderr, "Err: Could not create output file.\n"); return 1; }
 
     for (int k = 0; k < TABLESIZE; k++) {
         char* key = table.cities[k].key;
